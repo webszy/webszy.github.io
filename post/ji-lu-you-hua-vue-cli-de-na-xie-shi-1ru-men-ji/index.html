@@ -6,7 +6,7 @@
 <meta HTTP-EQUIV="pragma" CONTENT="no-cache"> 
 <meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate"> 
 <meta HTTP-EQUIV="expires" CONTENT="0"> 
-<title>关于 开发 的文章 | Let&#39;s Javascript</title>	
+<title>记录优化Vue-Cli的那些事1（入门级） | Let&#39;s Javascript</title>	
 
 <link rel="stylesheet" href="https://letjs.dev/styles/main.css">
 <script type="text/javascript">
@@ -158,10 +158,10 @@ window.onload=getCSS();
 	
 	                      
 		<div class="entry-content">
-			<h1 class="wow swing entry-title">关于 开发 的文章</h1>
+			<h1 class="wow swing entry-title">记录优化Vue-Cli的那些事1（入门级）</h1>
 <div class="entry-meta">
 <div class="wow bounce">
-	<i class="iconfont icon-rili"> <time class="lately-a" datetime="2019-08-13 22:19:27" itemprop="datePublished" pubdate="">2019-08-13</time></i>
+	<i class="iconfont icon-rili"> <time class="lately-a" datetime="2019-08-14 15:35:15" itemprop="datePublished" pubdate="">2019-08-14</time></i>
 	          </div>
 			
 </span>
@@ -169,25 +169,56 @@ window.onload=getCSS();
 		</div>
                   
 			<div class="wow slideInLeft entry-summary song">
-				<p><p>2019-8-13     <a href="/post/qian-duan-docker-ru-men/">前端docker入门</a><br>
-2019-8-14     <a href="/post/tong-guo-useragent-qie-huan-fang-wen-di-zhi-de-3-chong-fang-fa/">通过userAgent切换访问地址的3种方法</a><br>
-2019-8-14     <a href="/post/axios-feng-zhuang-zhi-nan/">axios封装指南</a><br>
-2019-8-14     <a href="/post/ji-lu-you-hua-vue-cli-de-na-xie-shi-1ru-men-ji/">记录优化Vue-Cli的那些事1（入门级</a><br>
-2019-8-14     <a href="/post/ru-men-ji-duo-yu-yan-pei-zhi/">入门级多语言配置</a></p>
+				<p><p>最近新作的一个H5 webApp的首页加载速度简直慢到发指，所以才打算优化一下，暂时先写一些入门级的优化。</p>
+<!-- more -->
+<p>首先先看一下优化前的情况，通过webpack-bundle-analyzer可以很直观的看出来，当前打包情况。在2.x的脚手架中,可以直接通过<br>
+<code>npm run build --report</code>来查看，3.x则需要安装插件</p>
+<h3 id="1-升级脚手架版本">1、升级脚手架版本</h3>
+<p>我之前还是使用的Vue-cli2.x的模板搭建的，我发现升级为3.x的确实能够显著提升速度，估计是因为webpack版本也升级了。</p>
+<ul>
+<li>注意图片路径问题以及组件路径问题</li>
+</ul>
+<blockquote>
+<p>之前放到static文件夹下的图片，直接写相对路径即可。例如<code>'../../static/images/1.png'</code>=&gt;<code>'images/1.png'</code>,组件路径同理。</p>
+</blockquote>
+<ul>
+<li>路由懒加载写法变化。</li>
+</ul>
+<blockquote>
+<p>之前我都是直接这样写<code>component: resolve =&gt; require(['../views/followers/index.vue'], resolve)</code>，现在貌似可以直接import了<code>()=&gt;{import '../views/followers/index.vue'}</code></p>
+</blockquote>
+<h3 id="2-cdn引入">2、cdn引入</h3>
+<blockquote>
+<p>其实在2.x的脚手架中已经实现了分开打包，app.js主要是业务代码，vendor.js则是第三方库。但是打包出来vendor.js还是过大。如何再拆分vendor还在继续研究中。目前我暂时使用cdn来解决,个人建议使用jsdelivr，速度不错。之后在webpack.base.conf.js中加入如下代码</p>
+</blockquote>
+<pre><code>    externals: {
+        'mint-ui': 'MINT',
+        'vue': 'Vue',
+        'vue-router': 'VueRouter',
+        'axios': 'axios',
+    }
+</code></pre>
+<p>PS.需要注意吧cdn引入的js标签放到#app上面<br>
+PS.. 注意引用的webpack中填写的名字应是挂载在window对象下的名字</p>
+<h3 id="3-优化图片">3、优化图片</h3>
+<p>优先使用字体小图标、纯css,css背景图或精灵图，尽量把图片放到assets目录中(可以直接压缩).</p>
+<blockquote>
+<p>展望后续：DLLPlugin的使用，vendor继续拆分，css拆分</p>
+</blockquote>
 </p>
 							</div>
 	<div class="wow bounceInDown vt-post-tags">
  
-				<a href="https://letjs.dev/tag/rLUcOjPOo" rel="tag">vue</a>	
-				 
-				<a href="https://letjs.dev/tag/f663imPVw" rel="tag">js</a>	
-				 
 					</div>						
 <nav class="navigation3 post-navigation3" role="navigation">
 		
 		<div class="nav-links3">
       
+		<div class="wow bounceInLeft nav-previous3"><a href="https://letjs.dev/post/ru-men-ji-duo-yu-yan-pei-zhi" rel="prev"> 入门级多语言配置</a></div>
 		 
+		 
+		<div class="wow bounceInRight nav-next3"><a href="https://letjs.dev/post/axios-feng-zhuang-zhi-nan" rel="next"> axios封装指南</a></div>
+		
 		</div>
 	</nav>
 	<div class="wow rollIn author-info" style="visibility: visible; animation-name: rollIn;">

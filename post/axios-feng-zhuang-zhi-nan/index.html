@@ -6,7 +6,7 @@
 <meta HTTP-EQUIV="pragma" CONTENT="no-cache"> 
 <meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate"> 
 <meta HTTP-EQUIV="expires" CONTENT="0"> 
-<title>关于 开发 的文章 | Let&#39;s Javascript</title>	
+<title>axios封装指南 | Let&#39;s Javascript</title>	
 
 <link rel="stylesheet" href="https://letjs.dev/styles/main.css">
 <script type="text/javascript">
@@ -158,10 +158,10 @@ window.onload=getCSS();
 	
 	                      
 		<div class="entry-content">
-			<h1 class="wow swing entry-title">关于 开发 的文章</h1>
+			<h1 class="wow swing entry-title">axios封装指南</h1>
 <div class="entry-meta">
 <div class="wow bounce">
-	<i class="iconfont icon-rili"> <time class="lately-a" datetime="2019-08-13 22:19:27" itemprop="datePublished" pubdate="">2019-08-13</time></i>
+	<i class="iconfont icon-rili"> <time class="lately-a" datetime="2019-08-14 15:32:32" itemprop="datePublished" pubdate="">2019-08-14</time></i>
 	          </div>
 			
 </span>
@@ -169,25 +169,110 @@ window.onload=getCSS();
 		</div>
                   
 			<div class="wow slideInLeft entry-summary song">
-				<p><p>2019-8-13     <a href="/post/qian-duan-docker-ru-men/">前端docker入门</a><br>
-2019-8-14     <a href="/post/tong-guo-useragent-qie-huan-fang-wen-di-zhi-de-3-chong-fang-fa/">通过userAgent切换访问地址的3种方法</a><br>
-2019-8-14     <a href="/post/axios-feng-zhuang-zhi-nan/">axios封装指南</a><br>
-2019-8-14     <a href="/post/ji-lu-you-hua-vue-cli-de-na-xie-shi-1ru-men-ji/">记录优化Vue-Cli的那些事1（入门级</a><br>
-2019-8-14     <a href="/post/ru-men-ji-duo-yu-yan-pei-zhi/">入门级多语言配置</a></p>
+				<p><p>在vue中最常用的应该就是axios了，这是一个很强大的处理ajax的库。今天我就分享一下我是如何封装axios的。axios的基本api不再赘述，提前安装一下也不用我说了吧</p>
+<!-- more -->
+<h2 id="第一步配置axios">第一步：配置axios</h2>
+<ul>
+<li>首先，创建一个<code>Service.js</code>，这里面存放的时axios的配置以及拦截器等，最后导出一个axios对象。我平常elementUI用的比较多，这里你也可以使用自己的UI库。</li>
+</ul>
+<pre><code class="language-javascript">import axios from 'axios'
+import { Message, Loading } from 'element-ui'
+const ConfigBaseURL = 'https://localhost:3000/' //默认路径，这里也可以使用env来判断环境
+let loadingInstance = null //这里是loading
+//使用create方法创建axios实例
+export const Service = axios.create({
+  timeout: 7000, // 请求超时时间
+  baseURL: ConfigBaseURL,
+  method: 'post',
+  headers: {
+    'Content-Type': 'application/json;charset=UTF-8'
+  }
+})
+// 添加请求拦截器
+Service.interceptors.request.use(config =&gt; {
+  loadingInstance = Loading.service({
+    lock: true,
+    text: 'loading...'
+  })
+  return config
+})
+// 添加响应拦截器
+Service.interceptors.response.use(response =&gt; {
+  loadingInstance.close()
+  // console.log(response)
+  return response.data
+}, error =&gt; {
+  console.log('TCL: error', error)
+  const msg = error.Message !== undefined ? error.Message : ''
+  Message({
+    message: '网络错误' + msg,
+    type: 'error',
+    duration: 3 * 1000
+  })
+  loadingInstance.close()
+  return Promise.reject(error)
+})
+</code></pre>
+<blockquote>
+<p>具体的拦截器逻辑以具体业务为准，我这里没什么逻辑，只是加了一个全局的loading而已</p>
+</blockquote>
+<h2 id="第二步封装请求">第二步：封装请求</h2>
+<blockquote>
+<p>这里我再创建一个<code>request.js</code>,这里面放的是具体请求。</p>
+</blockquote>
+<pre><code class="language-javascript">import {Service} from './Service'
+export function getConfigsByProductId(productId) {
+  return Service({
+    url: '/manager/getConfigsByProductId',
+    params: { productId: productId }
+  })
+}
+export function getAllAndroidPlugins() {
+  return Service({
+    url: '/manager/getAndroidPlugin ',
+    method: 'get'
+  })
+}
+export function addNewAndroidPlugin(data) {
+  return Service({
+    url: '/manager/addAndroidPlguin',
+    data: JSON.stringify(data)
+  })
+}
+</code></pre>
+<p>当然你也可以url再封装一遍，放到另一个文件里，我觉得这样并无什么意义，反而增加复杂度。这里主要注意的是起名问题，建议按功能起名，例如我这里<code>请求方式+功能或者内容+参数</code>,这样子直接看<code>getConfigsByProductId</code>这个名字也是很清晰明了</p>
+<h2 id="第三步使用">第三步：使用</h2>
+<p>在vue组件中</p>
+<pre><code>import {getAllAndroidPlugins,getConfigsByProductId,addNewAndroidPlugin} from '@/api/request.js'
+
+getAllAndroidPlugins()
+.then(res=&gt;{
+
+})
+</code></pre>
+<p>全局使用 在main.js中</p>
+<pre><code>import {Service} from '@/api/Service.js'
+Vue.prototype.$axios=Service
+
+</code></pre>
+<hr>
+<blockquote>
+<p>欢迎指正与交流</p>
+</blockquote>
 </p>
 							</div>
 	<div class="wow bounceInDown vt-post-tags">
  
-				<a href="https://letjs.dev/tag/rLUcOjPOo" rel="tag">vue</a>	
-				 
-				<a href="https://letjs.dev/tag/f663imPVw" rel="tag">js</a>	
-				 
 					</div>						
 <nav class="navigation3 post-navigation3" role="navigation">
 		
 		<div class="nav-links3">
       
+		<div class="wow bounceInLeft nav-previous3"><a href="https://letjs.dev/post/ji-lu-you-hua-vue-cli-de-na-xie-shi-1ru-men-ji" rel="prev"> 记录优化Vue-Cli的那些事1（入门级）</a></div>
 		 
+		 
+		<div class="wow bounceInRight nav-next3"><a href="https://letjs.dev/post/tong-guo-useragent-qie-huan-fang-wen-di-zhi-de-3-chong-fang-fa" rel="next"> 通过userAgent切换访问地址的3种方法</a></div>
+		
 		</div>
 	</nav>
 	<div class="wow rollIn author-info" style="visibility: visible; animation-name: rollIn;">
