@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://letjs.dev</id>
     <title>Let&apos;s Javascript</title>
-    <updated>2019-08-14T04:48:50.116Z</updated>
+    <updated>2019-08-14T05:05:11.419Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://letjs.dev"/>
     <link rel="self" href="https://letjs.dev/atom.xml"/>
@@ -48,7 +48,7 @@ pm2 init
 <h3 id="第二步编写dockerfile">第二步，编写Dockerfile</h3>
 <p>dockerfile相当于docker的配置文件，当前这份文件基本就可以部署nuxt了，如果是其他静态页面，建议加上nginx.<br>
 参考了 <a href="https://pm2.io/doc/zh/runtime/integration/docker/">PM2 的官方文档</a></p>
-<pre><code class="language-docker">FROM  keymetrics/pm2:latest-alpine
+<pre><code>FROM  keymetrics/pm2:latest-alpine
 ENV NODE_ENV=production
 ENV HOST 0.0.0.0 
 
@@ -66,7 +66,7 @@ CMD [ &quot;pm2-runtime&quot;, &quot;start&quot;, &quot;ecosystem.config.js&quot
 <p>首先服务器需要安装docker环境，这个不用我说了吧。<br>
 如果把文件上传到服务器，也不用我说了吧！<br>
 pc_ssr是我的项目名，你可以自己替换</p>
-<pre><code class="language-shell">//生成映像
+<pre><code>//生成映像
 sudo docker build -t pc_ssr.
 //运行这个映像
 sudo  docker run -p 8085:3000 -d --restart=always  pc_ssr
