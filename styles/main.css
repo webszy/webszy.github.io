@@ -779,6 +779,17 @@ a {
 .github-corner:hover .octo-arm {
   animation: octocat-wave 560ms ease-in-out;
 }
+.top-header-container img:hover {
+  animation: round 1s ease-out infinite forwards;
+}
+@keyframes round {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 @keyframes octocat-wave {
   0%,
   100% {
