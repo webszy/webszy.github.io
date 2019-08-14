@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://letjs.dev</id>
     <title>Let&apos;s Javascript</title>
-    <updated>2019-08-14T04:45:09.065Z</updated>
+    <updated>2019-08-14T04:48:50.116Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://letjs.dev"/>
     <link rel="self" href="https://letjs.dev/atom.xml"/>
@@ -15,18 +15,12 @@
         <link href="https://letjs.dev/post/qian-duan-docker-ru-men">
         </link>
         <updated>2019-08-13T13:32:45.000Z</updated>
-        <summary type="html"><![CDATA[<blockquote>
-<p>公司要求服务都以docker形式部署，虽然我的页面大部分都是静态页面，但是这次用nuxt做的ssr就是一个服务，所以也需要docker部署，研究了一番，总结一下。</p>
-</blockquote>
+        <summary type="html"><![CDATA[<p>公司要求服务都以docker形式部署，虽然我的页面大部分都是静态页面，但是这次用nuxt做的ssr就是一个服务，所以也需要docker部署，研究了一番，总结一下。</p>
 ]]></summary>
-        <content type="html"><![CDATA[<blockquote>
-<p>公司要求服务都以docker形式部署，虽然我的页面大部分都是静态页面，但是这次用nuxt做的ssr就是一个服务，所以也需要docker部署，研究了一番，总结一下。</p>
-</blockquote>
+        <content type="html"><![CDATA[<p>公司要求服务都以docker形式部署，虽然我的页面大部分都是静态页面，但是这次用nuxt做的ssr就是一个服务，所以也需要docker部署，研究了一番，总结一下。</p>
 <!-- more -->
 <h3 id="第一步安装pm2">第一步，安装pm2</h3>
-<blockquote>
 <p>PM2这个神器不多说了，总之不装就等着服务老关吧，还找不到原因。</p>
-</blockquote>
 <pre><code>npm i pm2 -g
 pm2 init
 </code></pre>
