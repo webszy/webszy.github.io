@@ -1,7 +1,7 @@
 (function($){
 	"use strict";	
     $(document).ready(function() {
-            
+         return   
         if ( $('.post').length ) { $('.post').fitVids(); }
             
         if ( $('select').length ) { $('select').chosen(); }
