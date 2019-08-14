@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://letjs.dev</id>
+    <title>Let&apos;s Javascript</title>
+    <updated>2019-08-14T04:38:37.739Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://letjs.dev"/>
+    <link rel="self" href="https://letjs.dev/atom.xml"/>
+    <logo>https://letjs.dev/images/avatar.png</logo>
+    <icon>https://letjs.dev/favicon.ico</icon>
+    <rights>All rights reserved 2019, Let&apos;s Javascript</rights>
+    <entry>
+        <title type="html"><![CDATA[前端docker入门]]></title>
+        <id>https://letjs.dev/post/qian-duan-docker-ru-men</id>
+        <link href="https://letjs.dev/post/qian-duan-docker-ru-men">
+        </link>
+        <updated>2019-08-13T13:32:45.000Z</updated>
+        <summary type="html"><![CDATA[<blockquote>
+<p>公司要求服务都以docker形式部署，虽然我的页面大部分都是静态页面，但是这次用nuxt做的ssr就是一个服务，所以也需要docker部署，研究了一番，总结一下。</p>
+</blockquote>
+]]></summary>
+        <content type="html"><![CDATA[<blockquote>
+<p>公司要求服务都以docker形式部署，虽然我的页面大部分都是静态页面，但是这次用nuxt做的ssr就是一个服务，所以也需要docker部署，研究了一番，总结一下。</p>
+</blockquote>
+<!-- more -->
+<h3 id="第一步安装pm2">第一步，安装pm2</h3>
+<blockquote>
+<p>PM2这个神器不多说了，总之不装就等着服务老关吧，还找不到原因。</p>
+</blockquote>
+<pre><code>npm i pm2 -g
+pm2 init
+</code></pre>
+<p>运行完成后，会在项目下生成一个<code>ecosystem.config.js</code>,这个是pm2的配置文件。</p>
+<pre><code>module.exports = {
+  apps : [{
+    name: 'pc_ssr',
+    script: 'npm start', //主要改这里，这里是启动服务的命令
+
+    // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
+    args: 'one two',
+    instances: 1,
+    autorestart: true,
+    watch: false,
+    max_memory_restart: '1G',
+    env: {
+      NODE_ENV: 'production'
+    },
+    env_production: {
+      NODE_ENV: 'production'
+    }
+  }]
+};
+</code></pre>
+<h3 id="第二步编写dockerfile">第二步，编写Dockerfile</h3>
+<p>dockerfile相当于docker的配置文件，当前这份文件基本就可以部署nuxt了，如果是其他静态页面，建议加上nginx.<br>
+参考了 <a href="https://pm2.io/doc/zh/runtime/integration/docker/">PM2 的官方文档</a></p>
+<pre><code class="language-docker">FROM  keymetrics/pm2:latest-alpine
+ENV NODE_ENV=production
+ENV HOST 0.0.0.0 
+
+WORKDIR /usr/src/app
+COPY . .
+
+ENV NPM_CONFIG_LOGLEVEL warn
+RUN npm install
+RUN npm run build
+EXPOSE 3000
+CMD [ &quot;pm2-runtime&quot;, &quot;start&quot;, &quot;ecosystem.config.js&quot; ]
+
+</code></pre>
+<h3 id="第三步部署">第三步，部署</h3>
+<p>首先服务器需要安装docker环境，这个不用我说了吧。<br>
+如果把文件上传到服务器，也不用我说了吧！<br>
+pc_ssr是我的项目名，你可以自己替换</p>
+<pre><code class="language-shell">//生成映像
+sudo docker build -t pc_ssr.
+//运行这个映像
+sudo  docker run -p 8085:3000 -d --restart=always  pc_ssr
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[hello js world]]></title>
+        <id>https://letjs.dev/post/hello-js-world</id>
+        <link href="https://letjs.dev/post/hello-js-world">
+        </link>
+        <updated>2019-08-12T14:58:07.000Z</updated>
+        <content type="html"><![CDATA[<p>我来了，我看到，我征服js<img src="https://letjs.dev/post-images/1565623045666.jpeg" alt=""></p>
+]]></content>
+    </entry>
+</feed>
