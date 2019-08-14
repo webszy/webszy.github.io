@@ -2,13 +2,110 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://letjs.dev</id>
     <title>Let&apos;s Javascript</title>
-    <updated>2019-08-14T06:27:56.040Z</updated>
+    <updated>2019-08-14T07:17:34.715Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://letjs.dev"/>
     <link rel="self" href="https://letjs.dev/atom.xml"/>
     <logo>https://letjs.dev/images/avatar.png</logo>
     <icon>https://letjs.dev/favicon.ico</icon>
     <rights>All rights reserved 2019, Let&apos;s Javascript</rights>
+    <entry>
+        <title type="html"><![CDATA[通过userAgent切换访问地址的3种方法]]></title>
+        <id>https://letjs.dev/post/tong-guo-useragent-qie-huan-fang-wen-di-zhi-de-3-chong-fang-fa</id>
+        <link href="https://letjs.dev/post/tong-guo-useragent-qie-huan-fang-wen-di-zhi-de-3-chong-fang-fa">
+        </link>
+        <updated>2019-08-14T07:16:36.000Z</updated>
+        <summary type="html"><![CDATA[<p>现实中经常会碰到根据游览器或者设备，或者系统去访问不同的网页。再此，我总结了3种常用的方法，供大家参考。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>现实中经常会碰到根据游览器或者设备，或者系统去访问不同的网页。再此，我总结了3种常用的方法，供大家参考。</p>
+<!-- more -->
+<h3 id="第一种通过js">第一种：通过JS</h3>
+<pre><code>var ua = window.userAgent || navigator.userAgent;
+if(ua.toLowerCase().indexOf('android')&gt;=0){
+    window.location.href=&quot;https://google.com&quot;
+}else if(ua.toLocaleLowerCase().indexOf(&quot;iphone&quot;) &gt;= 0){
+    window.location.href=&quot;https://apple.com&quot;
+}else if(ua.toLocaleLowerCase().indexOf(&quot;mac&quot;) &gt;= 0){
+    //此处省略
+}
+</code></pre>
+<p>建议将改js放置head标签中，以便尽快执行。</p>
+<h3 id="第二种通过nginx配置">第二种：通过nginx配置</h3>
+<pre><code>server {
+       listen 80;
+       listen       443 ssl;
+        ssl_certificate /opt/certs/vip/vip_bundle.crt;
+	ssl_certificate_key /opt/certs/vip/vip.key;
+       server_name www.vip.vip vip.vip;
+       access_log  logs/vip_access.log  main;
+       error_log   logs/vip_error.log;
+       location / {
+          root /opt/wwwroot/app;
+          try_files $uri $uri.html $uri/ =404;
+          index index.html index.htm;
+       }
+       # 这里就是根据userAgent去判断
+       location /geek {
+         if ($http_user_agent ~* &quot;Android&quot;) {
+            root /opt/wwwroot/app/andorid;
+            break ;
+	      }
+         if ($http_user_agent ~* &quot;(iPhone|iPad)&quot;) {
+            root /opt/wwwroot/app/ios;
+            break ;
+	      }
+         rewrite ^/(.*) https://geek.vip redirect;
+       }
+}
+</code></pre>
+<h3 id="第三种-通过后台路由">第三种 通过后台路由</h3>
+<p>这里是因为我要做一个下载链接，当安卓时直接返回apk,当ios时则返回appstore的地址,我使用了express</p>
+<pre><code>app.get('/api/xz',(req, res) =&gt; {
+    let userAgent=req.headers['user-agent']
+    //判断是否是搜索引擎爬虫访问
+    if(isRobot(userAgent)){
+        res.status(200)
+        return
+    }else{
+        let key=req.query.key||'vip'
+        let json=JSON.parse(fs.readFileSync(path.join(__dirname,'./redirectList.json'))),
+        switchInfo={},exists=false
+        for(let k of json){
+            if(k.key===key){
+                switchInfo=k
+                exists=true
+            }
+        }
+        if(!exists){ 
+            res.status(404)
+            return
+        }
+        
+        let system=userSystem(userAgent)
+        res.redirect(switchInfo[system])
+    }
+})
+//判断是否是搜索引擎
+function isRobot(userAgent){
+    let RobotList='qihoobot|Baiduspider|Googlebot|Googlebot-Mobile|Googlebot-Image|Mediapartners-Google|Adsbot-Google|Feedfetcher-Google|Yahoo! Slurp|Yahoo! Slurp China|YoudaoBot|Sosospider|Sogou spider|Sogou web spider|MSNBot|ia_archiver|Tomato Bot|FeedDemon|JikeSpider|Indy Library|Alexa Toolbar|AskTbFXTV|AhrefsBot|CrawlDaddy|CoolpadWebkit|Java|Feedly|UniversalFeedParser|ApacheBench|Microsoft URL Control|Swiftbot|ZmEu|oBot|jaunty|Python-urllib|lightDeckReports Bot|YYSpider|DigExt|YisouSpider|HttpClient|MJ12bot|heritrix|EasouSpider|Ezooms'
+    return RobotList.split('|').every(k=&gt;{
+        return userAgent.indexOf(k)&gt;-1
+    })
+}
+//判断用户系统类型
+function userSystem(userAgent){
+   let ua=userAgent.toLowerCase()
+   if(ua.indexOf('android')&gt;=0){
+       return 'android'
+   }else if(ua.indexOf('ios')&gt;=0||ua.indexOf('ipad')&gt;=0||ua.indexOf('mac')&gt;=0){
+        return 'ios'
+   }else{
+       return 'other'
+   }
+}
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[前端docker入门]]></title>
         <id>https://letjs.dev/post/qian-duan-docker-ru-men</id>

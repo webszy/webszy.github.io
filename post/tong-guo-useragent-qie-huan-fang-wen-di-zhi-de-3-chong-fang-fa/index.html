@@ -6,7 +6,7 @@
 <meta HTTP-EQUIV="pragma" CONTENT="no-cache"> 
 <meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate"> 
 <meta HTTP-EQUIV="expires" CONTENT="0"> 
-<title>前端docker入门 | Let&#39;s Javascript</title>	
+<title>通过userAgent切换访问地址的3种方法 | Let&#39;s Javascript</title>	
 
 <link rel="stylesheet" href="https://letjs.dev/styles/main.css">
 <script type="text/javascript">
@@ -158,10 +158,10 @@ window.onload=getCSS();
 	
 	                      
 		<div class="entry-content">
-			<h1 class="wow swing entry-title">前端docker入门</h1>
+			<h1 class="wow swing entry-title">通过userAgent切换访问地址的3种方法</h1>
 <div class="entry-meta">
 <div class="wow bounce">
-	<i class="iconfont icon-rili"> <time class="lately-a" datetime="2019-08-13 21:32:45" itemprop="datePublished" pubdate="">2019-08-13</time></i>
+	<i class="iconfont icon-rili"> <time class="lately-a" datetime="2019-08-14 15:16:36" itemprop="datePublished" pubdate="">2019-08-14</time></i>
 	          </div>
 			
 </span>
@@ -169,75 +169,104 @@ window.onload=getCSS();
 		</div>
                   
 			<div class="wow slideInLeft entry-summary song">
-				<p><p>公司要求服务都以docker形式部署，虽然我的页面大部分都是静态页面，但是这次用nuxt做的ssr就是一个服务，所以也需要docker部署，研究了一番，总结一下。</p>
+				<p><p>现实中经常会碰到根据游览器或者设备，或者系统去访问不同的网页。再此，我总结了3种常用的方法，供大家参考。</p>
 <!-- more -->
-<h3 id="第一步安装pm2">第一步，安装pm2</h3>
-<p>PM2这个神器不多说了，总之不装就等着服务老关吧，还找不到原因。</p>
-<pre><code>npm i pm2 -g
-pm2 init
+<h3 id="第一种通过js">第一种：通过JS</h3>
+<pre><code>var ua = window.userAgent || navigator.userAgent;
+if(ua.toLowerCase().indexOf('android')&gt;=0){
+    window.location.href=&quot;https://google.com&quot;
+}else if(ua.toLocaleLowerCase().indexOf(&quot;iphone&quot;) &gt;= 0){
+    window.location.href=&quot;https://apple.com&quot;
+}else if(ua.toLocaleLowerCase().indexOf(&quot;mac&quot;) &gt;= 0){
+    //此处省略
+}
 </code></pre>
-<p>运行完成后，会在项目下生成一个<code>ecosystem.config.js</code>,这个是pm2的配置文件。</p>
-<pre><code>module.exports = {
-  apps : [{
-    name: 'pc_ssr',
-    script: 'npm start', //主要改这里，这里是启动服务的命令
-
-    // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
-    args: 'one two',
-    instances: 1,
-    autorestart: true,
-    watch: false,
-    max_memory_restart: '1G',
-    env: {
-      NODE_ENV: 'production'
-    },
-    env_production: {
-      NODE_ENV: 'production'
+<p>建议将改js放置head标签中，以便尽快执行。</p>
+<h3 id="第二种通过nginx配置">第二种：通过nginx配置</h3>
+<pre><code>server {
+       listen 80;
+       listen       443 ssl;
+        ssl_certificate /opt/certs/vip/vip_bundle.crt;
+	ssl_certificate_key /opt/certs/vip/vip.key;
+       server_name www.vip.vip vip.vip;
+       access_log  logs/vip_access.log  main;
+       error_log   logs/vip_error.log;
+       location / {
+          root /opt/wwwroot/app;
+          try_files $uri $uri.html $uri/ =404;
+          index index.html index.htm;
+       }
+       # 这里就是根据userAgent去判断
+       location /geek {
+         if ($http_user_agent ~* &quot;Android&quot;) {
+            root /opt/wwwroot/app/andorid;
+            break ;
+	      }
+         if ($http_user_agent ~* &quot;(iPhone|iPad)&quot;) {
+            root /opt/wwwroot/app/ios;
+            break ;
+	      }
+         rewrite ^/(.*) https://geek.vip redirect;
+       }
+}
+</code></pre>
+<h3 id="第三种-通过后台路由">第三种 通过后台路由</h3>
+<p>这里是因为我要做一个下载链接，当安卓时直接返回apk,当ios时则返回appstore的地址,我使用了express</p>
+<pre><code>app.get('/api/xz',(req, res) =&gt; {
+    let userAgent=req.headers['user-agent']
+    //判断是否是搜索引擎爬虫访问
+    if(isRobot(userAgent)){
+        res.status(200)
+        return
+    }else{
+        let key=req.query.key||'vip'
+        let json=JSON.parse(fs.readFileSync(path.join(__dirname,'./redirectList.json'))),
+        switchInfo={},exists=false
+        for(let k of json){
+            if(k.key===key){
+                switchInfo=k
+                exists=true
+            }
+        }
+        if(!exists){ 
+            res.status(404)
+            return
+        }
+        
+        let system=userSystem(userAgent)
+        res.redirect(switchInfo[system])
     }
-  }]
-};
-</code></pre>
-<h3 id="第二步编写dockerfile">第二步，编写Dockerfile</h3>
-<p>dockerfile相当于docker的配置文件，当前这份文件基本就可以部署nuxt了，如果是其他静态页面，建议加上nginx.<br>
-参考了 <a href="https://pm2.io/doc/zh/runtime/integration/docker/">PM2 的官方文档</a></p>
-<pre><code>FROM  keymetrics/pm2:latest-alpine
-ENV NODE_ENV=production
-ENV HOST 0.0.0.0 
-
-WORKDIR /usr/src/app
-COPY . .
-
-ENV NPM_CONFIG_LOGLEVEL warn
-RUN npm install
-RUN npm run build
-EXPOSE 3000
-CMD [ &quot;pm2-runtime&quot;, &quot;start&quot;, &quot;ecosystem.config.js&quot; ]
-
-</code></pre>
-<h3 id="第三步部署">第三步，部署</h3>
-<p>首先服务器需要安装docker环境，这个不用我说了吧。<br>
-如果把文件上传到服务器，也不用我说了吧！<br>
-pc_ssr是我的项目名，你可以自己替换</p>
-<pre><code>//生成映像
-sudo docker build -t pc_ssr.
-//运行这个映像
-sudo  docker run -p 8085:3000 -d --restart=always  pc_ssr
+})
+//判断是否是搜索引擎
+function isRobot(userAgent){
+    let RobotList='qihoobot|Baiduspider|Googlebot|Googlebot-Mobile|Googlebot-Image|Mediapartners-Google|Adsbot-Google|Feedfetcher-Google|Yahoo! Slurp|Yahoo! Slurp China|YoudaoBot|Sosospider|Sogou spider|Sogou web spider|MSNBot|ia_archiver|Tomato Bot|FeedDemon|JikeSpider|Indy Library|Alexa Toolbar|AskTbFXTV|AhrefsBot|CrawlDaddy|CoolpadWebkit|Java|Feedly|UniversalFeedParser|ApacheBench|Microsoft URL Control|Swiftbot|ZmEu|oBot|jaunty|Python-urllib|lightDeckReports Bot|YYSpider|DigExt|YisouSpider|HttpClient|MJ12bot|heritrix|EasouSpider|Ezooms'
+    return RobotList.split('|').every(k=&gt;{
+        return userAgent.indexOf(k)&gt;-1
+    })
+}
+//判断用户系统类型
+function userSystem(userAgent){
+   let ua=userAgent.toLowerCase()
+   if(ua.indexOf('android')&gt;=0){
+       return 'android'
+   }else if(ua.indexOf('ios')&gt;=0||ua.indexOf('ipad')&gt;=0||ua.indexOf('mac')&gt;=0){
+        return 'ios'
+   }else{
+       return 'other'
+   }
+}
 </code></pre>
 </p>
 							</div>
 	<div class="wow bounceInDown vt-post-tags">
  
-				<a href="https://letjs.dev/tag/J--f2CQIB" rel="tag">dev</a>	
-				 
 					</div>						
 <nav class="navigation3 post-navigation3" role="navigation">
 		
 		<div class="nav-links3">
       
-		<div class="wow bounceInLeft nav-previous3"><a href="https://letjs.dev/post/tong-guo-useragent-qie-huan-fang-wen-di-zhi-de-3-chong-fang-fa" rel="prev"> 通过userAgent切换访问地址的3种方法</a></div>
 		 
-		 
-		<div class="wow bounceInRight nav-next3"><a href="https://letjs.dev/post/hello-js-world" rel="next"> hello js world</a></div>
+		<div class="wow bounceInRight nav-next3"><a href="https://letjs.dev/post/qian-duan-docker-ru-men" rel="next"> 前端docker入门</a></div>
 		
 		</div>
 	</nav>
