@@ -324,6 +324,7 @@ a {
   bottom: 0;
   background-color: #7c8280;
   background-size: cover;
+  background-position: left center;
   background-image: url('../media/images/sidebar-bg.jpg');
   display: flex;
   flex-direction: column;
