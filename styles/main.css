@@ -328,6 +328,7 @@ a {
   display: flex;
   flex-direction: column;
   overflow-y: hidden;
+  animation: sildes 10s linear 0.5s infinite backwards;
 }
 .sidebar .menu-btn {
   display: none;
@@ -374,6 +375,14 @@ a {
 }
 .sidebar .bottom-container a {
   color: #fff;
+}
+@keyframes sildes {
+  0% {
+    background-position-x: 0;
+  }
+  100% {
+    background-position-x: 1280px;
+  }
 }
 .main-container {
   margin-left: 320px;
@@ -814,6 +823,11 @@ a {
   }
   .github-corner .octo-arm {
     animation: octocat-wave 560ms ease-in-out;
+  }
+}
+@media (max-width: 800px) {
+  .github-corner {
+    display: none;
   }
 }
 
