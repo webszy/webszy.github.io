@@ -379,10 +379,10 @@ a {
 }
 @keyframes sildes {
   0% {
-    background-position-x: 0;
+    background-position-x: left;
   }
   100% {
-    background-position-x: 1280px;
+    background-position-x: right;
   }
 }
 .main-container {
