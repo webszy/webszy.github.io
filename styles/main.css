@@ -869,7 +869,7 @@ a {
   /* *********** */
 }
 .post-detail .post-content .friendLinks:hover::before {
-  transform: scale3d(15, 15, 15);
+  transform: scale3d(30, 30, 30);
 }
 
       .sidebar {
