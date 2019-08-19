@@ -831,13 +831,13 @@ a {
     display: none;
   }
 }
-.links {
+.post-detail .post-content .links {
   width: 100%;
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
 }
-.friendLinks {
+.post-detail .post-content .friendLinks {
   padding: 10px;
   margin-right: 20px;
   display: block;
@@ -847,7 +847,7 @@ a {
   overflow: hidden;
   position: relative;
 }
-.friendLinks::before {
+.post-detail .post-content .friendLinks::before {
   z-index: -1;
   content: "";
   display: block;
@@ -864,7 +864,7 @@ a {
   transition: transform 0.45s ease-in-out;
   /* *********** */
 }
-.friendLinks:hover::before {
+.post-detail .post-content .friendLinks:hover::before {
   transform: scale3d(15, 15, 15);
 }
 
