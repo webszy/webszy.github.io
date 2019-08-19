@@ -331,6 +331,9 @@ a {
   overflow-y: hidden;
   animation: sildes 10s linear 0.5s infinite backwards;
 }
+.sidebar:hover {
+  animation-play-state: paused;
+}
 .sidebar .menu-btn {
   display: none;
 }
