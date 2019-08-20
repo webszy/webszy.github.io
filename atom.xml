@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://letjs.dev</id>
     <title>Let&apos;s Javascript</title>
-    <updated>2019-08-20T05:37:10.814Z</updated>
+    <updated>2019-08-20T05:39:07.706Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://letjs.dev"/>
     <link rel="self" href="https://letjs.dev/atom.xml"/>
@@ -12,8 +12,8 @@
     <rights>All rights reserved 2019, Let&apos;s Javascript</rights>
     <entry>
         <title type="html"><![CDATA[leetcode解题之旅---两数之和（1）]]></title>
-        <id>https://letjs.dev/post/leetcode-jie-ti-zhi-lu-liang-shu-zhi-he-1</id>
-        <link href="https://letjs.dev/post/leetcode-jie-ti-zhi-lu-liang-shu-zhi-he-1">
+        <id>https://letjs.dev/post/leetcode-journey-1</id>
+        <link href="https://letjs.dev/post/leetcode-journey-1">
         </link>
         <updated>2019-08-20T03:17:45.000Z</updated>
         <content type="html"><![CDATA[<p>题目看起来并不难，但是真上手去做的时候，反而有点棘手<br>
