@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://letjs.dev</id>
     <title>Let&apos;s Javascript</title>
-    <updated>2019-08-20T03:22:10.484Z</updated>
+    <updated>2019-08-20T05:37:10.814Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://letjs.dev"/>
     <link rel="self" href="https://letjs.dev/atom.xml"/>
@@ -17,7 +17,7 @@
         </link>
         <updated>2019-08-20T03:17:45.000Z</updated>
         <content type="html"><![CDATA[<p>题目看起来并不难，但是真上手去做的时候，反而有点棘手<br>
-<img src="https://letjs.dev/post-images/1566271154988.png" alt=""><br>
+<img src="https://i.loli.net/2019/08/20/rXzAFIRkqw4C5su.png" alt=""><br>
 我的解法如下，核心思路就是遍历2次，只不过用indexOf代替了一次遍历。</p>
 <pre><code> var twoSum = function (nums, target) {
   const len = nums.length
@@ -30,7 +30,7 @@
 }
 </code></pre>
 <p>成绩如下，我会继续优化一下<br>
-<img src="https://letjs.dev/post-images/1566271250915.png" alt=""></p>
+<img src="https://i.loli.net/2019/08/20/1y2ovUN78gwC5JG.png" alt=""></p>
 ]]></content>
     </entry>
     <entry>
