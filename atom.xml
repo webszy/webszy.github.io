@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://letjs.dev</id>
     <title>Let&apos;s Javascript</title>
-    <updated>2019-08-19T10:42:14.001Z</updated>
+    <updated>2019-08-20T03:22:10.484Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://letjs.dev"/>
     <link rel="self" href="https://letjs.dev/atom.xml"/>
@@ -10,6 +10,29 @@
     <logo>https://letjs.dev/images/avatar.png</logo>
     <icon>https://letjs.dev/favicon.ico</icon>
     <rights>All rights reserved 2019, Let&apos;s Javascript</rights>
+    <entry>
+        <title type="html"><![CDATA[leetcode解题之旅---两数之和（1）]]></title>
+        <id>https://letjs.dev/post/leetcode-jie-ti-zhi-lu-liang-shu-zhi-he-1</id>
+        <link href="https://letjs.dev/post/leetcode-jie-ti-zhi-lu-liang-shu-zhi-he-1">
+        </link>
+        <updated>2019-08-20T03:17:45.000Z</updated>
+        <content type="html"><![CDATA[<p>题目看起来并不难，但是真上手去做的时候，反而有点棘手<br>
+<img src="https://letjs.dev/post-images/1566271154988.png" alt=""><br>
+我的解法如下，核心思路就是遍历2次，只不过用indexOf代替了一次遍历。</p>
+<pre><code> var twoSum = function (nums, target) {
+  const len = nums.length
+  for (let i = 0; i &lt; len; i++) {
+    let need=target-nums[i],j=nums.indexOf(need)
+    if(j&gt;-1&amp;&amp;j!==i){
+      return [i,j]
+    }
+  }
+}
+</code></pre>
+<p>成绩如下，我会继续优化一下<br>
+<img src="https://letjs.dev/post-images/1566271250915.png" alt=""></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[入门级多语言配置]]></title>
         <id>https://letjs.dev/post/ru-men-ji-duo-yu-yan-pei-zhi</id>
