@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://letjs.dev</id>
     <title>Let&apos;s Javascript</title>
-    <updated>2019-08-20T10:31:22.407Z</updated>
+    <updated>2019-08-27T05:51:36.152Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://letjs.dev"/>
     <link rel="self" href="https://letjs.dev/atom.xml"/>
@@ -10,6 +10,163 @@
     <logo>https://letjs.dev/images/avatar.png</logo>
     <icon>https://letjs.dev/favicon.ico</icon>
     <rights>All rights reserved 2019, Let&apos;s Javascript</rights>
+    <entry>
+        <title type="html"><![CDATA[d2-crud使用心得]]></title>
+        <id>https://letjs.dev/post/d2-crud-use-experience</id>
+        <link href="https://letjs.dev/post/d2-crud-use-experience">
+        </link>
+        <updated>2019-08-27T05:48:41.000Z</updated>
+        <summary type="html"><![CDATA[<p>近期主要在做后台管理系统，里面大量使用表格，由于要求表格能够实现增删改。其实如果时间充裕，自己封装是最好的，但是很显然，3天时间业务都写不完，还封装个毛线。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>近期主要在做后台管理系统，里面大量使用表格，由于要求表格能够实现增删改。其实如果时间充裕，自己封装是最好的，但是很显然，3天时间业务都写不完，还封装个毛线。</p>
+<!-- more -->
+<p>如何安装d2-crud以及基本使用，不再赘述，请自行查阅文档</p>
+<h3 id="开启表格编辑">开启表格编辑</h3>
+<p>当传入列的定义时，加入一个component字段，里面写上你要渲染的组件即可，常用的element 输入型组件都是支持，例如input,radio,select等</p>
+<pre><code>&lt;templete&gt;
+    &lt;section&gt;
+        &lt;d2-crud
+          ref=&quot;d2Crud&quot;
+          :columns=&quot;columns&quot;
+          :data=&quot;tableData&quot;
+          @CellDataChange=&quot;tableDataChange&quot;
+          /&gt;
+    &lt;/section&gt;
+&lt;/templete&gt;
+&lt;script&gt;
+export default {
+    data(){
+        return {
+            columns:[
+            {key:'coins',title:&quot;金币&quot;, width: '180',fixed: true,component: {name: 'el-input',size: 'small'}},
+            ]，
+            tableData:[
+                {coins:100}
+            ]
+        }
+    }
+}
+&lt;/script&gt;
+</code></pre>
+<p>开启后会每次blur的时候，会激活CellDataChange这个事件，这个事件会返回一个对象，可以直接解构.<br>
+如不考虑特殊情况，可以直接赋值</p>
+<pre><code>tableDataChange({rowIndex,key,value}){
+ this.tableData[rowIndex][key]=value
+}
+</code></pre>
+<h3 id="输入后验证">输入后验证</h3>
+<p>当输入完一个表格后，我们肯定需要验证一下，虽然d2-crud支持async-validator,但是书写一些规则有时候更麻烦。<br>
+我是这样处理的，写一个通用的循环函数，接收一个callback，然后在callback中处理验证，赋值等操作</p>
+<pre><code>//创建一个遍历tableData的函数
+makeTableDatasLoop(cb){
+    let tableNames=[ //这里存放的时候当前组件中用到的表格数据的名字
+        {key:'defaultData',name:'默认配置'},
+        {key:'coinsData',name:'coins'},
+        {key:'OrderData',name:'followOrder'}
+    ]
+     for(let i=0;i&lt;tableNames.length;i++){
+        let key=tableNames[i].key,name=tableNames[i].name
+        cb(key)
+     }
+  }，
+  uploadTableData(){
+      //验证规则
+      let checkTableItem=tableData=&gt;{
+       for(let i=0;i&lt;tableData.length;i++){
+          let keys=Object.keys(tableData[i])
+          for(let j=0;j&lt;keys.length;j++){
+            let name=keys[j],item=tableData[i][name]
+            if(name!=='showRemoveButton'&amp;&amp;name!='likeVip'&amp;&amp;(item===undefined||item&lt;=0||item.length===0)){
+              return false
+            }
+          }
+        }
+        return true
+    }
+     let func1=key=&gt;{
+       if(!checkTableItem(this[key])){
+        loadingInstance.close()
+        this.$message.warning(name+'表中出现未填项，请检查')
+        return
+      }
+    }
+    this.makeTableDatasLoop(func1)
+    //批量赋值
+    let info={}
+    let func2=key=&gt;{
+      info[key]=this[key]
+    }
+    // for(let i=0;i&lt;tableNames.length;i++){
+    //   let key=tableNames[i].key,name=tableNames[i].name
+    //   info[key]=this[key]
+    // }
+    this.makeTableDatasLoop(func2)
+  }
+</code></pre>
+<h3 id="自定义操作列">自定义操作列</h3>
+<p>这个需要给组件传入一个rowHandle，里面写上需要的组件</p>
+<pre><code>&lt;templete&gt;
+    &lt;section&gt;
+        &lt;d2-crud
+          ref=&quot;d2Crud&quot;
+          :columns=&quot;columns&quot;
+          :data=&quot;tableData&quot;
+          :rowHandle=&quot;rowHandle&quot;
+          @custom-emit-1=&quot;dosomething&quot;
+          @CellDataChange=&quot;tableDataChange&quot;
+          /&gt;
+    &lt;/section&gt;
+&lt;/templete&gt;
+&lt;script&gt;
+export default {
+data(){
+    return {
+         rowHandle: {
+  remove:{
+    icon: 'el-icon-delete',
+    size: 'small',
+    fixed: 'right',
+    confirm: true,
+    show (index, row) {
+      if (row.showRemoveButton) {
+        return true
+      }
+      return false
+    },
+    disabled (index, row) {
+      if (row.forbidRemove) {
+        return true
+      }
+      return false
+    }
+    },
+        custom: [
+          {
+            text: '自定义按钮',
+            type: 'warning',
+            size: 'small',
+            emit: 'custom-emit-1'
+          }
+        ]
+      }
+    }
+},
+methods:{
+    rowRemove({index,row}{
+        this.tableData.splice(index,1)
+    },
+    dosomething({index,row}){
+        console.log(index,row)
+    }
+}
+
+</code></pre>
+<h3 id="总结">总结</h3>
+<p>d2-crud在element ui的table之上已经封装了很多功能，基本已经可以满足比较复杂的表格，美中不足的是：好久没有更新了。</p>
+<hr>
+<p>欢迎收藏我的技术博客：https://letjs.dev</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[leetcode解题之旅---两数之和（1）]]></title>
         <id>https://letjs.dev/post/leetcode-journey-1</id>
