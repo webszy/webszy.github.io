@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://letjs.dev</id>
     <title>Let&apos;s Javascript</title>
-    <updated>2019-08-27T05:51:36.152Z</updated>
+    <updated>2019-09-16T07:15:18.109Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://letjs.dev"/>
     <link rel="self" href="https://letjs.dev/atom.xml"/>
@@ -10,6 +10,111 @@
     <logo>https://letjs.dev/images/avatar.png</logo>
     <icon>https://letjs.dev/favicon.ico</icon>
     <rights>All rights reserved 2019, Let&apos;s Javascript</rights>
+    <entry>
+        <title type="html"><![CDATA[我的vue项目总结（一）]]></title>
+        <id>https://letjs.dev/post/wo-de-vue-xiang-mu-zong-jie-yi</id>
+        <link href="https://letjs.dev/post/wo-de-vue-xiang-mu-zong-jie-yi">
+        </link>
+        <updated>2019-09-16T07:09:10.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="开篇语">开篇语</h1>
+<p>我们都看了很多文章，很多文章在告诉你，怎么写骚操作，vue有什么api，es6怎么用。真的很少有一个系统的，有针对性的告诉你怎么用vue做一个项目。所以我计划开始写这一系列文章，我希望能用我的经验，我的感悟，来让一个和初学者达到独立开发一个完整项目的标准。</p>
+<h2 id="前置知识">前置知识</h2>
+<p>本篇文章不是讲解vue文档的，所以你需要了解一些vue的知识，至于js，html都更不用说了。</p>
+<h1 id="开始一个项目">开始一个项目</h1>
+<p>当我们开始一个项目的时候，我们最起码应该有2个信息：需求和设计稿。如果缺少任何一个，我建议大家向相关人员了解清楚。下面我分开来说：</p>
+<h2 id="需求">需求</h2>
+<p>需求有可能来自公司内部，也有可能来自公司外部。对于公司内部的需求，其实往往简单些，因为有些业务你可能自身就接触过，比如你们之前的xx系统太烂了，要更新。对于公司外部的需求，其实更复杂些，因为用户往往是不可捉摸的，这时候一定要保持沟通，也要保留一定的灵活性，预防需求变更。</p>
+<p>一定要多沟通，彻底弄明白需求，我的建议是把你想象成用户，搞清楚需求的内在含义，才能更好的完成这个需求。</p>
+<h2 id="设计稿">设计稿</h2>
+<p>这个其实没什么说的，还原设计稿是每个web前端的基本功。我的布局水平也不是多好，但我仍有一些经验来分享。</p>
+<ul>
+<li>弹性盒目前是主流，不管是兼容性，还是功能性都够用，建议熟练使用，圣杯布局在移动端很常用。</li>
+<li>尽量把图片放进css里，这样加载更快，使用起来体验更好。</li>
+<li>每一块区域都应该包裹在一个独立的标签里，我把这叫做隔离</li>
+</ul>
+<h1 id="1-我对vue的理解">1、我对vue的理解</h1>
+<p>我觉得vue在项目中最重要的两个部分就是：响应式，组件化。</p>
+<h2 id="响应式">响应式</h2>
+<p>我认为的响应式就是数据与ui状态的统一。因此，当我们的app在ui上特别依赖于数据的变化，这时候就建议选择类似vue的框架里。如何设计响应式，这个我将在后面去说。</p>
+<h2 id="组件化">组件化</h2>
+<p>组件化是一种必然，是前端的天命。它颠覆了之前前端的写法，思路。想我之前，总是一个模块一个页面，然后jquery一把梭，那时候有组件吗？也有，毕竟jQuery也有一个load方法，但是组件并没有那么重要。</p>
+<p>我真正接触组件，还是在用vue的时候，.vue文件，也就是sfc。这时候才发现，组件是多么方便，减少了多少冗余。但是这也带来了一个新的问题：组件拆分。我觉得很多人拿到需求，一筹莫展的首要原因就是不知道如何拆分组件。</p>
+<h1 id="2-组件拆分组合">2、组件拆分组合</h1>
+<h2 id="拆分">拆分</h2>
+<p>根据我的经验，我把组件的类型分为：<span style="color:salmon;">显示组件，功能组件，容器组件。</span></p>
+<ul>
+<li>显示组件：这个没什么说的，一般就是纯粹显示一些信息，这类组件一般没有methods和data。</li>
+<li>功能组件：这个是最常见的组件，主要就是模块的功能。</li>
+<li>容器组件：则比较特殊，在我的实际项目中，既可以是获取数据的起点，也可以仅仅起一个连接作用。</li>
+</ul>
+<p>所以拆分组件就是就是根据功能以将你的设计稿分解为以上3种组件，并将其组合为一个产品。</p>
+<p>那么如何拆分呢，我都经验是这样的。</p>
+<p>第一步：确定容器级组件。这一步其实跟我们平常布局是一样的，有几个页面，或者有几个大的模块，根据功能上的联系来合理分配容器。</p>
+<p>第二步：划分功能组件至容器组件，并梳理出来数据流向。对于vue来说，数据驱动页面，数据流显然就是这个系统的核心。</p>
+<p>第三步：划分显示组件。显示组件虽然不是很重要，但是我一直一个原则：<span style="color:salmon;">减少功能组件，增加显示组件</span>。</p>
+<p>为什么要这样做？因为显示组件往往没有状态，或者状态依赖于自身之外的组件，就好比一个傀儡，自然更好控制。而功能组件由于里面会有data,会有methods，自身的状态可能随时修改，显然不好控制。</p>
+<h2 id="组合">组合</h2>
+<p>组件的组合其实就是组件的通讯。这个只要用过vue都应该至少掌握2种props和$emit,vuex。</p>
+<p>props是父传子，$emit是子调父。这个没什么讲的，但我可以介绍一些我常用的小tip.</p>
+<blockquote>
+<p>如果没用什么复杂操作，把$emit直接写到templete里。</p>
+<pre><code class="language-vue">&lt;button @click=&quot;$emit('handleClick',detail)&quot;&gt;{{missionBtnText}}&lt;/button&gt;
+</code></pre>
+</blockquote>
+<blockquote>
+<p>props需要加上type验证</p>
+<pre><code> props: {
+    detail: {
+      type: Object,//必须指明这个props的类型，如果传入其他类型就会报错
+      required: true
+    }
+  },
+</code></pre>
+</blockquote>
+<blockquote>
+<p>隐藏props渲染到页面,在子组件中加上这条配置</p>
+<pre><code> inheritAttrs: false
+</code></pre>
+</blockquote>
+<p>vuex我只说一点，中大型项目里，需要同时共享很多数据的时候再用</p>
+<h1 id="3-响应式">3、响应式</h1>
+<p>响应式的核心是数据，也就是vue里的data。合理的设计data，既能方便当前使用，也能方便后期扩展。</p>
+<blockquote>
+<p>我所谓的合理就是减少data里的数据。</p>
+</blockquote>
+<p>data里return的变量，其实都会被vue遍历，然后收集依赖，你定义的越多，层级越深，自然遍历就越慢。所以需要你甄别一下，一些固定不变的，一些仅仅是为了显示的，或者循环的。这时候你需要下一条</p>
+<blockquote>
+<p>善用computed</p>
+</blockquote>
+<p>computed真的是很好用的东西，比如上面一些仅是为了显示内容的，你完全可以把他封装到到一个js里。</p>
+<pre><code class="language-javascript">// a.js
+export default {
+  a: 'hello world',
+  b: 'target:test'
+}
+</code></pre>
+<p>然后在vue文件中引用</p>
+<pre><code class="language-javascript">import a from './utils/a'
+export default {
+	computed: {
+      contentA () {
+      	return a
+      }
+  }
+}
+</code></pre>
+<p>这时候这个<code>contentA</code>其实就可以在模板或者其他函数里使用，也就相当于定义了一个data。</p>
+<blockquote>
+<p>确保数据类型</p>
+</blockquote>
+<p>在vue3.0中，通过typescript将大大改善这个问题，但是在目前2.6我仍然建议大家定义data的时候保证数据类型。例如1，你不要定义成<code>'1'</code>,比如返回值是数组，你不要定义成空对象。要不然有时候排错真的很麻烦。</p>
+<hr>
+<p>最近也在回忆这一年多的项目历程，我如何从一个菜鸟,学前端，找工作。当时接手一个遗留项目，如何迷茫，对接一个支付，如何毫无头绪。希望能用我的经验,一起进步。</p>
+<div style='display:flex;align-items: center;'>
+    <p>欢迎关注我的公众号</p>
+    <img width='200' height='200' src='https://i.loli.net/2019/09/16/lzrH1TXbjsqQKyu.jpg'></img>
+</div>]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[d2-crud使用心得]]></title>
         <id>https://letjs.dev/post/d2-crud-use-experience</id>
